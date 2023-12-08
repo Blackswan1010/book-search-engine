@@ -1,11 +1,11 @@
-const { Book, User } = require('../models');
+const { User } = require('../models');
 const { signToken, AuthenticationError } = require('../utils/auth');
 
-const resolvers = {
+const resolvers= {
     Query: {
-        me: async (parent, { username }) => {
+        me:  async (parent, { username }) => {
             return User.findOne({ username: username }).populate('savedBooks');
-        },
+          },
     },
     Mutation: {
         login: async (parent, { email, password }) => {
@@ -25,20 +25,19 @@ const resolvers = {
             const token = signToken(user);
             return { token, user };
         },
-        saveBook: async (parent, { bookToSave, username}) => {
+        saveBook: async (parent, { bookToSave, username }) => {
             return User.findOneAndUpdate(
                 { username: username },
                 { $addToSet: { savedBooks: bookToSave }},
                 { new: true, }
-            );
-        },
+        )},
         removeBook: async (parent, { bookId, username }) => {
             return User.findOneAndUpdate(
                 { username: username},
                 { $pull: { savedBooks: { bookId: bookId } } },
                 { new: true }
-            );
-        },
+            )
+        }
     }
 };
 
